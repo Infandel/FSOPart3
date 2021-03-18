@@ -1,7 +1,7 @@
-POST http://localhost:3001/api/persons
+POST https://polar-woodland-22053.herokuapp.com/api/persons
 content-type: application/json
 
 {
-    "name": "tella Feedback",
-    "number": "1555515-255252"
+    "name": "Frida von Hellsing",
+    "number": "72727272-122112"
 }
