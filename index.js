@@ -1,11 +1,11 @@
 const express = require('express')
-const app = express()
 const morgan = require('morgan')
 const cors = require('cors')
 require('dotenv').config()
+
 const Person = require('./models/person')
 const { countDocuments, count } = require('./models/person')
-
+const app = express()
 
 app.use(express.static('build'))
 app.use(cors())
@@ -27,6 +27,7 @@ app.get('/info', (request, response) => {
   Person.countDocuments({})
   .then(counter => {
     response.send(`
+      <a href='/'>Home</a>
       <p>Phonebook has info for ${counter} people<p>
       <p>${new Date}<p>
     `)
