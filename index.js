@@ -1,3 +1,14 @@
+const app = require('./app') // the actual Express application
+const http = require('http')
+const config = require('./utils/config')
+const logger = require('./utils/logger')
+
+const server = http.createServer(app)
+
+server.listen(config.PORT, () => {
+  logger.info(`Server running on port ${config.PORT}`)
+})
+
 const express = require('express')
 const morgan = require('morgan')
 const cors = require('cors')
@@ -20,82 +31,10 @@ const requestLogger = (request, response, next) => {
 
 app.use(requestLogger)
 
-app.get('/info', (request, response) => {
-  Person.countDocuments({})
-  .then(counter => {
-    response.send(`
-      <a href='/'>Home</a>
-      <p>Phonebook has info for ${counter} people<p>
-      <p>${new Date}<p>
-    `)
-  })
-  .catch(error => next(error))
-})
-
-app.put('/api/persons/:id', (request, response, next) => {
-  const body = request.body
-
-  const person = {
-    content: body.content,
-    number: body.number,
-  }
-
-  Person.findByIdAndUpdate(request.params.id, person, { new: true, runValidators: true })
-    .then(updatedPerson => {
-      response.json(updatedPerson)
-    })
-    .catch(error => next(error))
-})
-
-app.get('/api/persons', (request, response) => {
-  Person.find({}).then(persons => {
-    response.json(persons)
-  })
-})
-
-app.get('/api/persons/:id', (request, response, next) => {
-  Person.findById(request.params.id)
-  .then(person => {
-    if (person) {
-    response.json(person)
-    } else {
-      response.status(404).end()
-    }
-  })
-  .catch(error => next(error))
-})
-
-app.delete('/api/persons/:id', (request, response, next) => {
-  Person.findByIdAndRemove(request.params.id)
-  .then(() => {
-    response.status(204).end()
-  })
-  .catch(error => next(error))
-})
-
 morgan.token('data',  (req) => {
   return JSON.stringify(req.body)
 })
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :data'))
-
-app.post('/api/persons', (request, response, next) => {
-  const body = request.body
-  // if (!body.name || !body.number) {
-  //   return response.status(400).json({ 
-  //     error: 'name or number is missing' 
-  //   })
-  // }
-  const person = new Person ({
-    name: body.name,
-    number: body.number
-  })
-  person.save()
-    .then(savedPerson => savedPerson.toJSON())
-    .then(savedAndFormattedPerson => {
-      response.json(savedAndFormattedPerson)
-    })
-    .catch(error => next(error))
-})
 
 const unknownEndpoint = (request, response) => {
   response.status(404).send({ error: 'unknown endpoint' })
