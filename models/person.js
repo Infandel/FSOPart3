@@ -24,7 +24,7 @@ const personSchema = new mongoose.Schema({
     required: [true, ' is required'],
     validate: {
       validator: function(v) {
-        return /\d{8,}/.test(v);
+        return /\d{8,}/.test(v)
       },
       message: 'should contain 8 digits at least'
     },
